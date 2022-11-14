@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,6 +30,7 @@ SECRET_KEY = 'django-insecure-(rnsem5$odt^i0_e$!5#g7$bpo3pngn3^e59b26fcoe=u6@*s1
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -49,6 +54,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -128,7 +134,7 @@ AUTH_USER_MODEL = 'authentication.User'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+# STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -145,6 +151,7 @@ REST_FRAMEWORK = {
     
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
+        # 'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
@@ -153,8 +160,12 @@ REST_FRAMEWORK = {
     ),
 }
 
+
+
 DJOSER = {
     'LOGIN_FIELD': 'username',
+    'CREATE_SESSION_ON_LOGIN': True,
+    'HIDE_USERS': True,
     
     # 'USER_CREATE_PASSWORD_RETYPE': True,
     # 'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
@@ -163,22 +174,36 @@ DJOSER = {
     # 'SET_PASSWORD_RETYPE': True,
     # 'PASSWORD_RESET_CONFIRM_URL': '/password/reset/confirm/{uid}/{token}',
     # 'ACTIVATION_URL': 'auth/activate/{uid}/{token}',
-    # 'CREATE_SESSION_ON_LOGIN': True,
     # 'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True, 
-    # 'HIDE_USERS': True,
     
     # 'USER_CREATE_PASSWORD_RETYPE':True,
-    # 'SERIALIZERS':{
-    #     'user_create': 'authentication.serializers.CreateUserSerializer',
-    #     'user': 'authentication.serializers.CreateUserSerializer',
-    # },
-    # 'EMAIL':{
-    #     'activation': 'web.email.ActivationEmail',
-    #     'password_reset': 'web.email.PasswordResetEmail',
-    #     'password_changed_confirmation': 'web.email.PasswordResetConfirmationEmail',
-    #     'confirmation': 'web.email.ConfirmationEmail',
-        # 'activation': 'djoser.email.ActivationEmail',
-        # 'username_changed_confirmation': 'djoser.email.UsernameChangedConfirmationEmail',
-        # 'username_reset': 'djoser.email.UsernameResetEmail',
-    # }
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_NAME = "csrftoken"
+CSRF_HEADER_NAME = "X-CSRFToken"
+
+CORS_ALLOW_METHODS = [
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+    "DELETE"
+]
+
+AWS_STORAGE_BUCKET_NAME = 'api-advocates'
+AWS_DEFAULT_ACL = 'public-read'
+AWS_S3_FILE_OVERWRITE = False
+AWS_QUERYSTRING_AUTH = False
+
+AWS_ACCESS_KEY_ID=os.environ.get('AWS_ACCESS_KEY_ID')
+
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+DISABLE_COLLECTSTATIC = 1
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATIC_URL = 'https://api-advocates.s3.amazonaws.com/staticfiles/'

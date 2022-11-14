@@ -44,8 +44,6 @@ class Transaction(models.Model):
   def save(self, *args, **kwargs):
     if self.transaction_type == "Withdrawal":
       self.withdraw()
-      print('Withdrawal')
     elif self.transaction_type == 'Deposit':
       self.deposit()
-      print('Deposit')
     super(Transaction, self).save(*args, **kwargs)

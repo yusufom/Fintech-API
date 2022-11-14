@@ -30,4 +30,5 @@ urlpatterns = [
     path('auth/', include('authentication.api.urls'), name='authentication'),
     path('docs/', coreschema_view),
     path('api/', include('core.api.urls'), name="core"),
+    path('', include('core.urls'), name="core-urls"),
 ]
