@@ -37,6 +37,15 @@ class DepositView(generics.GenericAPIView):
   # permissions_classes = [permissions.IsAuthenticated]
   
   def post(self, request, id, *args, **kwargs):
+    """
+    It takes in a request, checks if the user and account exists, validates the data, checks if the
+    amount is greater than 0, saves the data and returns a response
+    
+    :param request: The request object \n
+    :param id: The id of the user whose account is to be credited \n
+    :param amount: The amount to be deposited \n
+    :return: A response object with the status code and the data
+    """
     
     try:
       user = User.objects.get(id=id)
@@ -81,8 +90,26 @@ class WithdrawalView(generics.GenericAPIView):
   # permissions_classes = [permissions.IsAuthenticated]
   
   def post(self, request, id, *args, **kwargs):
-    user = User.objects.get(id=id)
-    account = Account.objects.get(user=user)
+    """
+    It checks if the user exists, if the account exists, if the amount is less than the balance, if
+    the amount is greater than 0, and if all these conditions are met, it saves the transaction
+    
+    :param request: The request object \n
+    :param id: This is the id of the user whose account is to be credited \n
+    :param amount: This is the amount to be withdrawn \n
+    :return: The transactor amount
+    """
+    try:
+      user = User.objects.get(id=id)
+    except User.DoesNotExist:
+      return Response(status=status.HTTP_404_NOT_FOUND)
+
+    try:
+      account = Account.objects.get(user=user)
+    except Account.DoesNotExist:
+      return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = TransactionSerializers(data=request.data)
     serializer = TransactionSerializers(data=request.data)
     if serializer.is_valid():
       amount_withdrawn = serializer.validated_data.get("amount")

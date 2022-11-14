@@ -11,6 +11,12 @@ class IndexView(generics.ListAPIView):
 
   
   def get(self, request):
+    """
+    It returns a dictionary of some of the endpoints in the API
+    
+    :param request: The request object passed in by the URL router
+    :return: A dictionary with the keys being the endpoints and the values being the urls.
+    """
     payload = {
         "Documentation" : "/docs",
         "login" : "/auth/jwt/create/",
