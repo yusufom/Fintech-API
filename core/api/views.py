@@ -15,6 +15,14 @@ class AccountView(APIView):
   # permissions_classes = [permissions.IsAuthenticated]
   
   def get(self, request, id, *args, **kwargs):
+    """
+    It tries to get an account with the id passed in the url, if it exists, it returns the account
+    balance, if it doesn't exist, it returns an empty response
+    
+    :param request: The request object
+    :param id: The id of the account to be retrieved
+    :return: The get method is returning the account balance of the user.
+    """
     try: 
       queryset = Account.objects.get(id=id)
       serializer = AccountSerializers(queryset)
